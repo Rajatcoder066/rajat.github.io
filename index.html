@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whether</title>
+</head>
+<link rel="icon" type="image/x-icon" href="icons8-globe.gif">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+<style>
+
+html, body { height: 100%; }
+body {
+  background:radial-gradient(ellipse at center, rgba(255,254,234,1) 0%, rgba(255,254,234,1) 35%, #B7E8EB 100%);
+  overflow: hidden;
+}
+
+.ocean { 
+  height: 5%;
+  width:100%;
+  position:absolute;
+  bottom:0;
+  left:0;
+  background: #015871;
+}
+
+.wave {
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; 
+  position: absolute;
+  top: -198px;
+  width: 6400px;
+  height: 198px;
+  animation: wave 7s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
+  transform: translate3d(0, 0, 0);
+}
+
+.wave:nth-of-type(2) {
+  top: -175px;
+  animation: wave 7s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
+  opacity: 1;
+}
+
+@keyframes wave {
+  0% {
+    margin-left: 0;
+  }
+  100% {
+    margin-left: -1600px;
+  }
+}
+
+@keyframes swell {
+  0%, 100% {
+    transform: translate3d(0,-25px,0);
+  }
+  50% {
+    transform: translate3d(0,5px,0);
+  }
+}
+
+.card{
+    
+
+  margin: 20px auto;
+  border-radius: 20px;
+opacity: 0px;
+
+}
+.card-img-top{
+    height: 80px;
+    width: 60px;
+    margin: 10px auto;
+    animation: 3s linear infinite alternate;
+}
+.input{
+  display: inline-block;
+  border-radius: 20%;
+  margin-top: 3px;
+  margin: 20px;
+}
+#btn{
+  margin-top: 5px;
+  background-color: blueviolet;
+  color: aliceblue;
+  border-radius: 5px;
+}
+</style>
+<body>
+<div class="ocean">
+<div class="wave"></div>
+<div class="wave"></div>
+</div>
+<div class="card text-center opacity-90" style="width: 18rem;">
+  <div class="input">
+    <h5>Enter the city Name</h5>
+    <input type="text" id="city"><br>
+    <button id="btn" onclick="fetchapi()">submit</button>
+  </div>
+
+    <img class="card-img-top" src="https://t3.gstatic.com/images?q=tbn:ANd9GcRZUtdoO4rZ2a_uFqEDCTJ6OEdaC-4olwi2jjPf01QAMVDaTGlZ" alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title" id="cityname">Bhiwandi </h5>
+      <span id="state">Maharashtra</span>
+      <p class="card-text" id="date"> date and time</p>
+    </div>
+    <div class="card-body">
+      <h5>Temperature</h5>
+        <h5 class="card-title" id="cell"></h5>
+        Wind <p class="card-text" id="wind"> </p>
+       Humidity <p class="card-text" id="hum"> </p>
+      </div>
+  </div>
+
+  
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+<script>
+    const curdate=document.getElementById('date');
+    var now =new Date();
+    var day=now.getDay();
+    let days=[
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thrusday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ]
+    console.log(days[day-1]);
+    let months=[
+      "jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ]
+    let month=now.getMonth();
+    console.log(months[month]);
+    let date=now.getDate();
+    console.log(date);
+    let hours=now.getHours();
+    let min =now.getMinutes();
+    let period="AM";
+    if(hours>11){
+      period="PM";
+      if (hours>12) hours-=12;
+    }
+    if(min<10){
+      min="0"+min;
+    }
+    curdate.innerHTML=`${days[day-1]} | ${months[month]} ${date} | ${hours}:${min} ${period}`;
+    console.log(days[day-1],months[month],date);
+    console.log(hours,min,period);
+
+function fetchapi(){
+  let city=document.getElementById("city").value;
+  //console.log(city);  
+    //http://api.weatherapi.com/v1/current.json?key=6d543e3f34084d3488e74943221507&q=mumbai&aqi=no
+      const xhr=new XMLHttpRequest();
+      xhr.open('GET',`http://api.weatherapi.com/v1/current.json?key=6d543e3f34084d3488e74943221507&q=${city}&aqi=no`,'true');
+      xhr.onprogress=function(){
+      console.log("this is on progress");
+      }
+      xhr.onreadystatechange=function(){
+     // console.log(this.response);
+    }
+    xhr.onload=function(){
+    if (this.status === 200) {
+        let json = JSON.parse(this.responseText);
+        let location = json.location;
+        let temp=json.current;
+        let city=document.getElementById('cityname').innerHTML=location.name;
+        let state=document.getElementById('state').innerHTML=location.region;
+        let cell=document.getElementById('cell').innerHTML=temp.temp_c+" C | "+temp.temp_f+" F";
+        let wind=document.getElementById('wind').innerHTML=temp.wind_kph+" KPH";
+        let hum=document.getElementById('hum').innerHTML=temp.humidity;
+        
+    }
+  }
+    xhr.send();
+}
+</script>
+</html>
